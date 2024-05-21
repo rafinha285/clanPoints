@@ -1,0 +1,4 @@
+name: clanPoints
+version: '${project.version}'
+main: me.abacate.clanpoints.ClanPoints
+api-version: '1.20'
