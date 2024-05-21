@@ -9,17 +9,37 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+import java.util.logging.Level;
+
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.*;
 
 public class PlayerManager {
 
-    private MongoCollection playerCollection;
+    private MongoCollection<Document> playerCollection;
     public PlayerManager(MongoDatabase database){
         this.playerCollection = database.getCollection("playerPoints");
     }
     public boolean isInDatabase(Player player){
-        Document query = new Document("_id",player.getUniqueId());
-        Object playerDoc = playerCollection.find(query).first();
+//        Document query = new Document("_id",player.getUniqueId().toString());
+        Object playerDoc = playerCollection.find(eq("_id",player.getUniqueId().toString())).first();
         return playerDoc!=null;
+    }
+    public boolean setPointsPlayer(Player player,Integer points){
+        if(!isInDatabase(player)){
+            Bukkit.getLogger().log(Level.parse("severe"),"O player naoe sta na database");
+            return false;
+        }else{
+            playerCollection.updateOne(eq("_id",player.getUniqueId().toString()),set("points",points));
+            return true;
+        }
+    }
+    public String getClan(Player player){
+        return playerCollection.find(eq("_id",player.getUniqueId().toString())).first().getString("clan");
+    }
+    public int getPointsPlayer(Player player){
+        Document playerDoc = playerCollection.find(eq("_id",player.getUniqueId().toString())).first();
+        return playerDoc.getInteger("points");
     }
     public void checkAndAddPlayer(Player player) {
         Document query = new Document("_id",player.getUniqueId().toString());

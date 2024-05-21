@@ -1,9 +1,11 @@
 package me.abacate.clanpoints.types;
 
+import org.bson.Document;
+
 import java.util.List;
 import java.util.UUID;
 
-public class ClanMongo {
+public class ClanMongo extends Document {
     private String name;
     private List<UUID> members;
     private int points;
